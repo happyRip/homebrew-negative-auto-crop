@@ -7,33 +7,23 @@ Automatic frame detection and cropping for Lightroom Classic film negatives.
 ```bash
 brew tap happyRip/negative-auto-crop
 brew install negative-auto-crop
+brew install --cask negative-auto-crop-plugin
 ```
 
-Then install the plugin and shortcuts:
-
-```bash
-negative-auto-crop install
-```
+This installs:
+- `negative-auto-crop` formula: Python backend for frame detection
+- `negative-auto-crop-plugin` cask: Lightroom Classic plugin
 
 ## Usage
 
 After installation, the plugin appears in Lightroom Classic under:
-- **File > Plug-in Extras > Auto Crop** (Option+Shift+R)
-- **File > Plug-in Extras > Settings** (Control+G)
+- **File > Plug-in Extras > Auto Crop**
+- **File > Plug-in Extras > Settings**
 
 ## Uninstallation
 
 ```bash
-negative-auto-crop uninstall
+brew uninstall --cask negative-auto-crop-plugin
 brew uninstall negative-auto-crop
 brew untap happyRip/negative-auto-crop
-```
-
-## Commands
-
-```bash
-negative-auto-crop install            # Install plugin + shortcuts
-negative-auto-crop install plugin     # Install plugin only
-negative-auto-crop install shortcuts  # Install shortcuts only
-negative-auto-crop uninstall          # Uninstall plugin + shortcuts
 ```

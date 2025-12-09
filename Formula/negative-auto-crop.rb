@@ -3,8 +3,8 @@ class NegativeAutoCrop < Formula
 
   desc "Automatic frame detection and cropping for Lightroom Classic film negatives"
   homepage "https://github.com/happyRip/Frame-Detection"
-  url "https://github.com/happyRip/Frame-Detection/releases/download/v0.0.6/negative_auto_crop-0.0.6.tar.gz"
-  sha256 "50bfde0ddc0f83839842e5ab41d51a1100fbb7b90cb174ad11673bb8b0282e13"
+  url "https://github.com/happyRip/Frame-Detection/releases/download/v0.0.9/negative_auto_crop-0.0.9.tar.gz"
+  sha256 "bbf878a054f3398e49209d9954daa5c2e267358a78104ddfef9b301ef04618b6"
   license "AGPL-3.0-or-later"
 
   depends_on "python@3.12"

@@ -1,6 +1,6 @@
 cask "negative-auto-crop-plugin" do
-  version "0.0.4"
-  sha256 "fa2eb5a07a74d1df84669951bd41bb752a09080ff55dc164ba20308843ddbd2f"
+  version "0.0.6"
+  sha256 "d1e234a8212bb975775c23ecdea7c8b6e7d796d62b2da29f1903013fb3eee29a"
 
   url "https://github.com/happyRip/Frame-Detection/releases/download/v#{version}/NegativeAutoCrop.lrplugin.zip"
   name "NegativeAutoCrop Lightroom Plugin"

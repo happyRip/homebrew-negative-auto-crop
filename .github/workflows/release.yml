@@ -1,0 +1,83 @@
+name: Update Homebrew Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.0.11)'
+        required: true
+        type: string
+  repository_dispatch:
+    types: [release]
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${{ github.event.client_payload.version }}"
+          fi
+          # Remove 'v' prefix if present
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download release assets and calculate SHA256
+        id: sha
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Download tarball
+          curl -sL -o tarball.tar.gz \
+            "https://github.com/happyRip/Frame-Detection/releases/download/v${VERSION}/negative_auto_crop-${VERSION}.tar.gz"
+          TARBALL_SHA=$(sha256sum tarball.tar.gz | cut -d' ' -f1)
+          echo "tarball_sha=$TARBALL_SHA" >> $GITHUB_OUTPUT
+
+          # Download plugin zip
+          curl -sL -o plugin.zip \
+            "https://github.com/happyRip/Frame-Detection/releases/download/v${VERSION}/NegativeAutoCrop.lrplugin.zip"
+          PLUGIN_SHA=$(sha256sum plugin.zip | cut -d' ' -f1)
+          echo "plugin_sha=$PLUGIN_SHA" >> $GITHUB_OUTPUT
+
+      - name: Update Formula
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TARBALL_SHA="${{ steps.sha.outputs.tarball_sha }}"
+
+          sed -i \
+            -e "s|url \"https://github.com/happyRip/Frame-Detection/releases/download/v[^\"]*\"|url \"https://github.com/happyRip/Frame-Detection/releases/download/v${VERSION}/negative_auto_crop-${VERSION}.tar.gz\"|" \
+            -e "s|sha256 \"[a-f0-9]*\"|sha256 \"${TARBALL_SHA}\"|" \
+            Formula/negative-auto-crop.rb
+
+      - name: Update Cask
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PLUGIN_SHA="${{ steps.sha.outputs.plugin_sha }}"
+
+          sed -i \
+            -e "s|version \"[^\"]*\"|version \"${VERSION}\"|" \
+            -e "s|sha256 \"[a-f0-9]*\"|sha256 \"${PLUGIN_SHA}\"|" \
+            Casks/negative-auto-crop-plugin.rb
+
+      - name: Commit and push
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Formula/negative-auto-crop.rb Casks/negative-auto-crop-plugin.rb
+          git commit -m "Update version to \`v${VERSION}\`"
+          git push
